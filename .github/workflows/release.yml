@@ -1,0 +1,48 @@
+# Release pipeline: on a version tag (v*), build the shaded runnable jar,
+# verify the test suite still passes, and attach the artifact to a GitHub
+# release. Kept deliberately small: one platform-independent artifact.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish shaded jar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and test
+        run: mvn -q verify
+
+      - name: Resolve project version
+        id: version
+        run: echo "version=$(mvn -q help:evaluate -Dexpression=project.version \
+                 -DforceStdout)" >> "$GITHUB_OUTPUT"
+
+      - name: Create the release and attach the jar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            "target/secure-vault-${{ steps.version.outputs.version }}.jar#" \
+            --title "Secure Vault ${{ github.ref_name }}" \
+            --notes "Runnable on any machine with a Java 21+ runtime:
+          \`\`\`bash
+          java -jar secure-vault-${{ steps.version.outputs.version }}.jar
+          \`\`\`
+          The vault file (\`vault.dat\`) is created next to the working directory.
+          See LIMITATIONS.md before storing anything you care about."

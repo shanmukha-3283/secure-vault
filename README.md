@@ -60,6 +60,18 @@ mvn -q verify
 mvn exec:java
 ```
 
+**Runnable jar** (any machine with a Java 21+ runtime, no Maven needed):
+
+```bash
+mvn -q package -DskipTests
+java -jar target/secure-vault-0.1.0.jar
+```
+
+Release builds of the jar are attached to
+[GitHub releases](https://github.com/shanmukha-3283/secure-vault/releases)
+and produced automatically by the `Release` workflow whenever a `v*` tag
+is pushed.
+
 ## Project layout
 
 ```
@@ -90,7 +102,7 @@ commands.
 - [x] Phases 1–7: crypto core, storage, service, validation, GUI, hardening
 - [x] Master password rotation (re-encryption with fresh salt + IV)
 - [x] CI (GitHub Actions, JDK 21)
-- [ ] Packaging: shaded jar or `jpackage` + GitHub release
+- [x] Packaging: shaded runnable jar attached to a GitHub release (v0.1.0)
 
 ---
 Educational project. Not audited. Provided as-is without any warranty.
