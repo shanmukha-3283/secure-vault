@@ -1,0 +1,24 @@
+# Build output
+target/
+
+# Vault data must never be committed (encrypted or not).
+vault.dat
+vault.dat.tmp
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Logs / crash dumps
+*.log
+hs_err_pid*
+
+# Local development notes (kept locally, never published)
+AGENTS.md
+BUILD_GUIDE.md
+.opencode/
