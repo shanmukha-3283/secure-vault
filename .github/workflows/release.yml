@@ -30,8 +30,11 @@ jobs:
 
       - name: Resolve project version
         id: version
-        run: echo "version=$(mvn -q help:evaluate -Dexpression=project.version \
-                 -DforceStdout)" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)
+          if [ -z "$VERSION" ]; then echo "Could not resolve project version."; exit 1; fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved project version: $VERSION"
 
       - name: Create the release and attach the jar
         env:
